@@ -6,7 +6,7 @@ This package is divided into modules named after the different sections
 organized (since the names of some functions are reused for different
 sections) and helps minimize individual file size. Furthermore,
 this organization system results in user requests being less confusing to
-make.
+make (see GraphiQL using app.py to better visualize how this is helpful.)
 
 Functions from new APIs can easily be added to this package by defining the
 output of the functions as strawberry.type classes, creating
