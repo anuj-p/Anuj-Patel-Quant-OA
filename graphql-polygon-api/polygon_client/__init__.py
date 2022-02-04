@@ -19,6 +19,13 @@ Polygon API key. It did not make sense to include any premium tier endpoints
 as I cannot personally test them and, therefore, cannot test the results.
 That being said, new endpoints (i.e. premium tier endpoints or reference
 data endpoints) can easily be added.
+
+THIS WILL NOT PREVENT FLASK IMPLEMENTATION! However, since this package is
+effectively independent, it should be installed as a regular package. This
+will prevent problems with the 'graphql_wrapper' package, which currently
+expects 'polygon_client' to be explained by whatever module is running it.
+The best solution for this is probably Poetry (https://python-poetry.org/).
+As a result, the current directory organization is very strict.
 """
 
-KEY = ""
+KEY = "6mK2FCpgpyFWpbGn4O2DiGuSMlcTGc48"
