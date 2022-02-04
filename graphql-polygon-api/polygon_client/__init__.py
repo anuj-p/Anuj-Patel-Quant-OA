@@ -28,4 +28,6 @@ The best solution for this is probably Poetry (https://python-poetry.org/).
 As a result, the current directory organization is very strict.
 """
 
+# This is my API key. It will remain accessible for a while, but will need
+# to be replaced.
 KEY = "6mK2FCpgpyFWpbGn4O2DiGuSMlcTGc48"
