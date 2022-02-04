@@ -7,7 +7,7 @@ from json import JSONDecodeError, loads
 from requests import get, RequestException
 
 
-def get_aggregates(ticker: str, multiplier: int, timespan: str, from_: str, to: str, adjusted: bool = True, sort: str = "asc", limit: int = 5000) -> dict:
+def get_aggregates(ticker: str, multiplier: int, timespan: str, from_: str, to: str, adjusted: bool = True, ascending: bool = True, limit: int = 5000) -> dict:
     """
     :param ticker: ticker symbol of the stock (case-sensitive)
     :param multiplier: size of the timespan multiplier
@@ -15,7 +15,7 @@ def get_aggregates(ticker: str, multiplier: int, timespan: str, from_: str, to: 
     :param from_: starting date of the aggregate time window (YYYY-MM-DD)
     :param to: ending date of the aggregate time window (YYYY-MM-DD)
     :param adjusted: whether or not the results are adjusted for splits
-    :param sort: method of sorting of the results by timestamp ('asc'/'desc')
+    :param ascending: whether or not the results should be sorted by timestamp ascending (otherwise descending)
     :param limit: maximum number of base aggregates queried to create the aggregate results (<= 50000)
     :return: aggregate bars for a stock over a given date range in custom time window sizes
     """
@@ -29,22 +29,29 @@ def get_aggregates(ticker: str, multiplier: int, timespan: str, from_: str, to: 
         raise ValueError("'from_' date should be non-empty.")
     if "/" in from_:
         raise ValueError("'from_' date should not include '/'.")
+    if "-" not in from_:
+        raise ValueError("'from_' date should be of format 'YYYY-MM-DD'.")
     if to == "":
         raise ValueError("'to' date should be non-empty.")
     if "/" in to:
         raise ValueError("'to' date should not include '/'.")
+    if "-" not in to:
+        raise ValueError("'to' date should be of format 'YYYY-MM-DD'.")
     if multiplier < 1:
         raise ValueError("Timespan 'multiplier' should be at least 1.")
     possible_timespans = ["minute", "hour", "day", "week", "month", "quarter", "year"]
     if timespan not in possible_timespans:
         raise ValueError("'timespan' should be 'minute', 'hour', 'day', 'week', 'month', 'quarter', or 'year'.")
-    possible_sorts = ['asc', 'desc']
-    if sort not in possible_sorts:
-        raise ValueError("'sort' should be 'asc' or 'desc'.")
     if limit < 1:
         raise ValueError("'limit' should be at least 1.")
     if limit > 50000:
         raise ValueError("'limit' should be no more than 50000.")
+
+    # input morphing
+    if ascending:
+        sort = "asc"
+    else:
+        sort = "desc"
 
     # request
     endpoint = f"https://api.polygon.io/v2/aggs/ticker/{ticker}/range/{multiplier}/year/{from_}/{to}?adjusted={adjusted}&sort={sort}&limit={limit}&apiKey={KEY}"
@@ -90,6 +97,8 @@ def get_grouped_daily(date: str, adjusted: bool = True) -> dict:
         raise ValueError("'date' should be non-empty.")
     if "/" in date:
         raise ValueError("'date' should not include '/'.")
+    if "-" not in date:
+        raise ValueError("'date' should be of format 'YYYY-MM-DD'.")
 
     # request
     endpoint = f"https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{date}?adjusted={adjusted}&apiKey={KEY}"
@@ -143,6 +152,8 @@ def get_daily_open_close(ticker: str, date: str, adjusted: bool = True) -> dict:
         raise ValueError("'date' should be non-empty.")
     if "/" in date:
         raise ValueError("'date' should not include '/'.")
+    if "-" not in date:
+        raise ValueError("'date' should be of format 'YYYY-MM-DD'.")
 
     # request
     endpoint = f"https://api.polygon.io/v1/open-close/{ticker}/{date}?adjusted={adjusted}&apiKey={KEY}"
