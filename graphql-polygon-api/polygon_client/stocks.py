@@ -2,7 +2,7 @@
 This module contains functions for Polygon's Stocks API (see https://polygon.io/docs/stocks).
 """
 
-from . import KEY
+from polygon_client import KEY
 from json import JSONDecodeError, loads
 from requests import get, RequestException
 

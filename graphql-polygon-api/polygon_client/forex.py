@@ -1,1 +1,1 @@
-from . import KEY
+from polygon_client import KEY
