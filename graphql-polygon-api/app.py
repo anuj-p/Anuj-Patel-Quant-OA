@@ -2,7 +2,8 @@
 This script acts as an EXAMPLE of an implementation of graphql_wrapper.
 This implementation uses Flask. To use this implementation and access a
 GraphiQL view, open a Python prompt/Linux terminal/PowerShell setup with
-Python in PATH and run the following commands from inside the repository.
+Python setup for PATH and run the following commands from inside the
+repository.
 
 `pip install strawberry-graphql`
 `pip install flask`
