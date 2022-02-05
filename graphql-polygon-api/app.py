@@ -1,7 +1,7 @@
 """
 This script acts as an EXAMPLE of an implementation of graphql_wrapper.
 This implementation uses Flask. To use this implementation and access a
-GraphiQL view, open a Python prompt/Linux terminal/PowerShell setup with
+GraphiQL view, open a Python Powershell prompt/regular PowerShell with
 Python setup for PATH and run the following commands from inside the
 repository.
 

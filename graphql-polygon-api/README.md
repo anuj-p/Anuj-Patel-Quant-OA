@@ -5,7 +5,7 @@ Most of these comments are summarized in every README.md.
 
 ## Flask Implementation
 To use the Flask implementation and access a GraphiQL view, open a Python 
-prompt/Linux terminal/PowerShell setup with Python setup for PATH and run the 
+Powershell prompt/regular PowerShell with Python setup for PATH and run the 
 following commands from inside the repository.
 
 `pip install strawberry-graphql`
