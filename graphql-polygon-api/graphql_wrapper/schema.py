@@ -1,8 +1,8 @@
-from graphql_wrapper import stocks as stocks
-from graphql_wrapper import options as options
-from graphql_wrapper import forex as forex
-from graphql_wrapper import crypto as crypto
-from graphql_wrapper import futures as futures
+from graphql_wrapper import stocks
+from graphql_wrapper import options
+from graphql_wrapper import forex
+from graphql_wrapper import crypto
+from graphql_wrapper import futures
 import strawberry
 
 
