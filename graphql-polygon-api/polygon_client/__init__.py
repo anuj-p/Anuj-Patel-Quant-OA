@@ -13,8 +13,8 @@ does not seem to be well maintained and lacks some features (i.e. entire
 options section.) Furthermore, a custom client is better equipped to handle
 errors and send readable results through GraphQL.
 
-This package will be able to make requests to 14 market data endpoints
-through 14 functions. The endpoints included will work with a free tier
+This package is be able to make requests to 14 market data endpoints
+through 14 functions. The endpoints included work with a free tier
 Polygon API key. It did not make sense to include any premium tier endpoints
 as I cannot personally test them and, therefore, cannot test the results.
 That being said, new endpoints (i.e. premium tier endpoints or reference
