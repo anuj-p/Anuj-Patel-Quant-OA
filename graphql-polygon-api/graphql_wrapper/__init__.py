@@ -9,9 +9,8 @@ this organization system results in user requests being less confusing to
 make (see GraphiQL using app.py to better visualize how this is helpful.)
 
 Functions from new APIs can easily be added to this package by defining the
-output of the functions as strawberry.type classes, creating
+output of the functions as strawberry.type classes in 'structs.py', creating
 strawberry.field methods to convert the output of the functions, and placing
-the new classes and functions in their relevant sections (i.e. stocks,
-options, forex, and crypto.)
+the functions into their relevant sections (i.e. stocks, options, forex, and
+crypto.)
 """
-

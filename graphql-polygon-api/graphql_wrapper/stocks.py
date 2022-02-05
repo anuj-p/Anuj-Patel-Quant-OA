@@ -4,90 +4,23 @@ for strawberry schema.
 """
 
 from datetime import datetime
-from enum import Enum
+from graphql_wrapper import structs
 from polygon_client import stocks as polygon_client
 import strawberry
 from typing import List
-
-
-# enums
-@strawberry.enum
-class AggregatesTimespan(Enum):
-    MINUTE = "minute"
-    HOUR = "hour"
-    DAY = "day"
-    WEEK = "week"
-    MONTH = "month"
-    QUARTER = "quarter"
-    YEAR = "year"
-
-
-@strawberry.enum
-class AggregatesSort(Enum):
-    ASCENDING = True
-    DESCENDING = False
-
-
-# output structures
-@strawberry.type
-class AggregatesBar:
-    close: float
-    high: float
-    low: float
-    transactions: float
-    open: float
-    time: datetime
-    volume: float  # apparently volume can be non-integer...
-    vw_price: float
-
-
-@strawberry.type
-class DailyOpenClose:
-    after_hours: float
-    close: float
-    high: float
-    low: float
-    open: float
-    pre_market: float
-    volume: int
-
-
-@strawberry.type
-class GroupedDailyBar:
-    ticker: str
-    close: float
-    high: float
-    low: float
-    transactions: float
-    open: float
-    time: datetime
-    volume: float  # apparently volume can be non-integer...
-    vw_price: float
-
-
-@strawberry.type
-class PreviousClose:
-    close: float
-    high: float
-    low: float
-    transactions: float
-    open: float
-    time: datetime
-    volume: float  # apparently volume can be non-integer...
-    vw_price: float
 
 
 # user visible
 @strawberry.type
 class Stocks:
     @strawberry.field
-    def aggregates(self, ticker: str, timespan: AggregatesTimespan, from_: str, to: str, multiplier: int = 1, adjusted: bool = True, sort: AggregatesSort = AggregatesSort.ASCENDING, limit: int = 5000) -> List["AggregatesBar"]:
+    def aggregates(self, ticker: str, timespan: structs.Timespan, from_: str, to: str, multiplier: int = 1, adjusted: bool = True, sort: structs.Sort = structs.Sort.ASCENDING, limit: int = 5000) -> List["structs.AggregatesBar"]:
         """
         :param ticker: ticker symbol of the stock (case-sensitive)
-        :param multiplier: size of the timespan multiplier
         :param timespan: type of time window ('MINUTE'/'HOUR'/'DAY'/'WEEK'/'MONTH'/'QUARTER'/'YEAR')
         :param from_: starting date of the aggregate time window (YYYY-MM-DD)
         :param to: ending date of the aggregate time window (YYYY-MM-DD)
+        :param multiplier: size of the timespan multiplier
         :param adjusted: whether or not the results are adjusted for splits
         :param sort: type of timestamp sorting ('ASCENDING' or 'DESCENDING')
         :param limit: maximum number of base aggregates queried to create the aggregate results (<= 50000)
@@ -98,7 +31,7 @@ class Stocks:
         results = data["results"]
         market = []
         for result in results:
-            market.append(AggregatesBar(
+            market.append(structs.AggregatesBar(
                 close=result["c"],
                 high=result["h"],
                 low=result["l"],
@@ -111,7 +44,7 @@ class Stocks:
         return market
 
     @strawberry.field
-    def daily_open_close(self, ticker: str, date: str, adjusted: bool = True) -> DailyOpenClose:
+    def daily_open_close(self, ticker: str, date: str, adjusted: bool = True) -> structs.DailyOpenClose:
         """
         :param ticker: ticker symbol of the stock (case-sensitive)
         :param date: date of the requested open/close (YYYY-MM-DD)
@@ -120,7 +53,7 @@ class Stocks:
         """
 
         data = polygon_client.get_daily_open_close(ticker, date, adjusted=adjusted)
-        return DailyOpenClose(
+        return structs.DailyOpenClose(
             after_hours=data["afterHours"],
             close=data["close"],
             high=data["high"],
@@ -131,7 +64,7 @@ class Stocks:
         )
 
     @strawberry.field
-    def grouped_daily(self, date: str, adjusted: bool = True) -> List["GroupedDailyBar"]:
+    def grouped_daily(self, date: str, adjusted: bool = True) -> List["structs.GroupedDailyBar"]:
         """
         :param date: date of the requested grouped daily (YYYY-MM-DD)
         :param adjusted: whether or not the results are adjusted for splits
@@ -142,7 +75,7 @@ class Stocks:
         results = data["results"]
         market = []
         for result in results:
-            market.append(GroupedDailyBar(
+            market.append(structs.GroupedDailyBar(
                 ticker=result["T"],
                 close=result["c"],
                 high=result["h"],
@@ -156,7 +89,7 @@ class Stocks:
         return market
 
     @strawberry.field
-    def previous_close(self, ticker: str, adjusted: bool = True) -> PreviousClose:
+    def previous_close(self, ticker: str, adjusted: bool = True) -> structs.PreviousClose:
         """
         :param ticker: ticker symbol of the stock (case-sensitive)
         :param adjusted: whether or not the results are adjusted for splits
@@ -166,7 +99,7 @@ class Stocks:
         data = polygon_client.get_previous_close(ticker, adjusted=adjusted)
         results = data["results"]
         result = results[0]
-        return PreviousClose(
+        return structs.PreviousClose(
             close=result["c"],
             high=result["h"],
             low=result["l"],
