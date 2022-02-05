@@ -75,7 +75,7 @@ def get_aggregates(ticker: str, expiration: str, call: bool, strike: float, mult
         sort = "desc"
 
     # request
-    endpoint = f"https://api.polygon.io/v2/aggs/ticker/{ticker}/range/{multiplier}/year/{from_}/{to}?adjusted={adjusted}&sort={sort}&limit={limit}&apiKey={KEY}"
+    endpoint = f"https://api.polygon.io/v2/aggs/ticker/{ticker}/range/{multiplier}/{timespan}/{from_}/{to}?adjusted={adjusted}&sort={sort}&limit={limit}&apiKey={KEY}"
     try:
         response = get(endpoint)
     except RequestException:
