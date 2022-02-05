@@ -9,8 +9,8 @@ from requests import get, RequestException
 
 def get_aggregates(currency_to: str, currency_from: str, multiplier: int, timespan: str, from_: str, to: str, adjusted: bool = True, ascending: bool = True, limit: int = 5000) -> dict:
     """
-    :param currency_to: currency symbol to exchange to (case-sensitive)
-    :param currency_from: currency symbol to exchange from (case-sensitive)
+    :param currency_to: currency symbol to exchange to
+    :param currency_from: currency symbol to exchange from
     :param multiplier: size of the timespan multiplier
     :param timespan: size of the time window ('minute'/'hour'/'day'/'week'/'month'/'quarter'/'year')
     :param from_: starting date of the aggregate time window (YYYY-MM-DD)
@@ -53,6 +53,8 @@ def get_aggregates(currency_to: str, currency_from: str, multiplier: int, timesp
         raise ValueError("'limit' should be no more than 50000.")
 
     # input morphing
+    currency_to = currency_to.upper()
+    currency_from = currency_from.upper()
     ticker = f"C:{currency_to}{currency_from}"
     if ascending:
         sort = "asc"
@@ -143,8 +145,8 @@ def get_grouped_daily(date: str, adjusted: bool = True) -> dict:
 
 def get_previous_close(currency_to: str, currency_from: str, adjusted: bool = True) -> dict:
     """
-    :param currency_to: currency symbol to exchange to (case-sensitive)
-    :param currency_from: currency symbol to exchange from (case-sensitive)
+    :param currency_to: currency symbol to exchange to
+    :param currency_from: currency symbol to exchange from
     :param adjusted: whether or not the results are adjusted
     :return: previous day's open prices, high prices, low prices, close prices, and more (see Polygon's API docs)
     """
@@ -160,6 +162,8 @@ def get_previous_close(currency_to: str, currency_from: str, adjusted: bool = Tr
         raise ValueError("'currency_to' should not include '/'.")
 
     # input morphing
+    currency_to = currency_to.upper()
+    currency_from = currency_from.upper()
     ticker = f"C:{currency_to}{currency_from}"
 
     # request

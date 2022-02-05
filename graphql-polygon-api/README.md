@@ -27,6 +27,5 @@ implementations (see integrations in their
 
 ## Format
 * Dates should be in the format of 'YYYY-MM-DD'.
-* Tickers are case-sensitive (so capitalize!)
 * If the format of anything ever gets confusing, refer to relevant files in 
 [graphql_wrapper](https://github.com/anuj-p/Anuj-Patel-Quant-OA/tree/graphql-polygon-api/graphql-polygon-api/graphql_wrapper) and/or the "Docs" section in GraphiQL.

@@ -9,7 +9,7 @@ from requests import get, RequestException
 
 def get_aggregates(ticker: str, multiplier: int, timespan: str, from_: str, to: str, adjusted: bool = True, ascending: bool = True, limit: int = 5000) -> dict:
     """
-    :param ticker: ticker symbol of the stock (case-sensitive)
+    :param ticker: ticker symbol of the stock
     :param multiplier: size of the timespan multiplier
     :param timespan: size of the time window ('minute'/'hour'/'day'/'week'/'month'/'quarter'/'year')
     :param from_: starting date of the aggregate time window (YYYY-MM-DD)
@@ -48,6 +48,7 @@ def get_aggregates(ticker: str, multiplier: int, timespan: str, from_: str, to: 
         raise ValueError("'limit' should be no more than 50000.")
 
     # input morphing
+    ticker = ticker.upper()
     if ascending:
         sort = "asc"
     else:
@@ -88,7 +89,7 @@ def get_aggregates(ticker: str, multiplier: int, timespan: str, from_: str, to: 
 
 def get_daily_open_close(ticker: str, date: str, adjusted: bool = True) -> dict:
     """
-    :param ticker: ticker symbol of the stock (case-sensitive)
+    :param ticker: ticker symbol of the stock
     :param date: date of the requested open/close (YYYY-MM-DD)
     :param adjusted: whether or not the results are adjusted for splits
     :return: open prices, close prices, afterhours prices, and more (see Polygon's API docs)
@@ -107,6 +108,7 @@ def get_daily_open_close(ticker: str, date: str, adjusted: bool = True) -> dict:
         raise ValueError("'date' should be of format 'YYYY-MM-DD'.")
 
     # request
+    ticker = ticker.upper()
     endpoint = f"https://api.polygon.io/v1/open-close/{ticker}/{date}?adjusted={adjusted}&apiKey={KEY}"
     try:
         response = get(endpoint)
@@ -193,7 +195,7 @@ def get_grouped_daily(date: str, adjusted: bool = True) -> dict:
 
 def get_previous_close(ticker: str, adjusted: bool = True) -> dict:
     """
-    :param ticker: ticker symbol of the stock (case-sensitive)
+    :param ticker: ticker symbol of the stock
     :param adjusted: whether or not the results are adjusted for splits
     :return: previous day's open prices, high prices, low prices, close prices, and more (see Polygon's API docs)
     """
@@ -203,6 +205,9 @@ def get_previous_close(ticker: str, adjusted: bool = True) -> dict:
         raise ValueError("'ticker' should be non-empty.")
     if "/" in ticker:
         raise ValueError("'ticker' should not include '/'.")
+
+    # input morphing
+    ticker = ticker.upper()
 
     # request
     endpoint = f"https://api.polygon.io/v2/aggs/ticker/{ticker}/prev?adjusted={adjusted}&apiKey={KEY}"

@@ -16,7 +16,7 @@ class Stocks:
     @strawberry.field
     def aggregates(self, ticker: str, timespan: structs.Timespan, from_: str, to: str, multiplier: int = 1, adjusted: bool = True, sort: structs.Sort = structs.Sort.ASCENDING, limit: int = 5000) -> List["structs.AggregatesBar"]:
         """
-        :param ticker: ticker symbol of the stock (case-sensitive)
+        :param ticker: ticker symbol of the stock
         :param timespan: type of time window ('MINUTE'/'HOUR'/'DAY'/'WEEK'/'MONTH'/'QUARTER'/'YEAR')
         :param from_: starting date of the aggregate time window (YYYY-MM-DD)
         :param to: ending date of the aggregate time window (YYYY-MM-DD)
@@ -46,7 +46,7 @@ class Stocks:
     @strawberry.field
     def daily_open_close(self, ticker: str, date: str, adjusted: bool = True) -> structs.DailyOpenClose:
         """
-        :param ticker: ticker symbol of the stock (case-sensitive)
+        :param ticker: ticker symbol of the stock
         :param date: date of the requested open/close (YYYY-MM-DD)
         :param adjusted: whether or not the results are adjusted for splits
         :return: open prices, close prices, afterhours prices, and more (see Polygon's API docs)
@@ -91,7 +91,7 @@ class Stocks:
     @strawberry.field
     def previous_close(self, ticker: str, adjusted: bool = True) -> structs.PreviousClose:
         """
-        :param ticker: ticker symbol of the stock (case-sensitive)
+        :param ticker: ticker symbol of the stock
         :param adjusted: whether or not the results are adjusted for splits
         :return: previous day's open prices, high prices, low prices, close prices, and more (see Polygon's API docs)
         """

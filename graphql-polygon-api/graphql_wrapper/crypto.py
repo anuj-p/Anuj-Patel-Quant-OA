@@ -16,8 +16,8 @@ class Crypto:
     @strawberry.field
     def aggregates(self, currency_to: str, currency_from: str, timespan: structs.Timespan, from_: str, to: str, multiplier: int = 1, adjusted: bool = True, sort: structs.Sort = structs.Sort.ASCENDING, limit: int = 5000) -> List["structs.AggregatesBar"]:
         """
-        :param currency_to: currency symbol to exchange to (case-sensitive)
-        :param currency_from: currency symbol to exchange from (case-sensitive)
+        :param currency_to: currency symbol to exchange to
+        :param currency_from: currency symbol to exchange from
         :param timespan: type of time window ('MINUTE'/'HOUR'/'DAY'/'WEEK'/'MONTH'/'QUARTER'/'YEAR')
         :param from_: starting date of the aggregate time window (YYYY-MM-DD)
         :param to: ending date of the aggregate time window (YYYY-MM-DD)
@@ -47,8 +47,8 @@ class Crypto:
     @strawberry.field
     def daily_open_close(self, currency_to: str, currency_from: str, date: str, adjusted: bool = True) -> structs.CryptoDailyOpenClose:
         """
-        :param currency_to: currency symbol to exchange to (case-sensitive)
-        :param currency_from: currency symbol to exchange from (case-sensitive)
+        :param currency_to: currency symbol to exchange to
+        :param currency_from: currency symbol to exchange from
         :param date: date of the requested open/close (YYYY-MM-DD)
         :param adjusted: whether or not the results are adjusted for splits
         :return: open prices, close prices, afterhours prices, and more (see Polygon's API docs)
@@ -108,8 +108,8 @@ class Crypto:
     @strawberry.field
     def previous_close(self, currency_to: str, currency_from: str, adjusted: bool = True) -> structs.PreviousClose:
         """
-        :param currency_to: currency symbol to exchange to (case-sensitive)
-        :param currency_from: currency symbol to exchange from (case-sensitive)
+        :param currency_to: currency symbol to exchange to
+        :param currency_from: currency symbol to exchange from
         :param adjusted: whether or not the results are adjusted
         :return: previous day's open prices, high prices, low prices, close prices, and more (see Polygon's API docs)
         """

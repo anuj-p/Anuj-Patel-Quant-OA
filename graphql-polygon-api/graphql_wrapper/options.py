@@ -16,7 +16,7 @@ class Options:
     @strawberry.field
     def aggregates(self, ticker: str, expiration: str, type: structs.OptionsType, strike: float, timespan: structs.Timespan, from_: str, to: str, multiplier: int = 1, adjusted: bool = True, sort: structs.Sort = structs.Sort.ASCENDING, limit: int = 5000) -> List["structs.AggregatesBar"]:
         """
-        :param ticker: ticker symbol of the underlying stock (case-sensitive)
+        :param ticker: ticker symbol of the underlying stock
         :param expiration: expiration date of the option (YYYY-MM-DD)
         :param type: type of option ('CALL' or 'PUT')
         :param strike: strike price of the option
@@ -49,7 +49,7 @@ class Options:
     @strawberry.field
     def daily_open_close(self, ticker: str, expiration: str, type: structs.OptionsType, strike: float, date: str, adjusted: bool = True) -> structs.DailyOpenClose:
         """
-        :param ticker: ticker symbol of the underlying stock (case-sensitive)
+        :param ticker: ticker symbol of the underlying stock
         :param expiration: expiration date of the option (YYYY-MM-DD)
         :param type: type of option ('CALL' or 'PUT')
         :param strike: strike price of the option
@@ -72,7 +72,7 @@ class Options:
     @strawberry.field
     def previous_close(self, ticker: str, expiration: str, type: structs.OptionsType, strike: float, adjusted: bool = True) -> structs.PreviousClose:
         """
-        :param ticker: ticker symbol of the underlying stock (case-sensitive)
+        :param ticker: ticker symbol of the underlying stock
         :param expiration: expiration date of the option (YYYY-MM-DD)
         :param type: type of option ('CALL' or 'PUT')
         :param strike: strike price of the option

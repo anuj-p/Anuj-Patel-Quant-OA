@@ -9,7 +9,7 @@ from requests import get, RequestException
 
 def get_aggregates(ticker: str, expiration: str, call: bool, strike: float, multiplier: int, timespan: str, from_: str, to: str, adjusted: bool = True, ascending: bool = True, limit: int = 5000) -> dict:
     """
-    :param ticker: ticker symbol of the underlying stock (case-sensitive)
+    :param ticker: ticker symbol of the underlying stock
     :param expiration: expiration date of the option (YYYY-MM-DD)
     :param call: whether or not the option is a call (otherwise it is a put)
     :param strike: strike price of the option
@@ -63,6 +63,7 @@ def get_aggregates(ticker: str, expiration: str, call: bool, strike: float, mult
         raise ValueError("'limit' should be no more than 50000.")
 
     # input morphing
+    ticker = ticker.upper()
     expiration = expiration[2:].replace("-", "")
     strike = str(int(strike * 1000)).zfill(8)
     if call:
@@ -108,7 +109,7 @@ def get_aggregates(ticker: str, expiration: str, call: bool, strike: float, mult
 
 def get_daily_open_close(ticker: str, expiration: str, call: bool, strike: float, date: str, adjusted: bool = True) -> dict:
     """
-    :param ticker: ticker symbol of the underlying stock (case-sensitive)
+    :param ticker: ticker symbol of the underlying stock
     :param expiration: expiration date of the option (YYYY-MM-DD)
     :param call: whether or not the option is a call (otherwise it is a put)
     :param strike: strike price of the option
@@ -142,6 +143,7 @@ def get_daily_open_close(ticker: str, expiration: str, call: bool, strike: float
         raise ValueError("'date' should be of format 'YYYY-MM-DD'.")
 
     # input morphing
+    ticker = ticker.upper()
     expiration = expiration[2:].replace("-", "")
     strike = str(int(strike * 1000)).zfill(8)
     if call:
@@ -186,7 +188,7 @@ def get_daily_open_close(ticker: str, expiration: str, call: bool, strike: float
 
 def get_previous_close(ticker: str, expiration: str, call: bool, strike: float, adjusted: bool = True) -> dict:
     """
-    :param ticker: ticker symbol of the underlying stock (case-sensitive)
+    :param ticker: ticker symbol of the underlying stock
     :param expiration: expiration date of the option (YYYY-MM-DD)
     :param call: whether or not the option is a call (otherwise it is a put)
     :param strike: strike price of the option
@@ -213,6 +215,7 @@ def get_previous_close(ticker: str, expiration: str, call: bool, strike: float, 
         raise ValueError("'strike' price should be less than $99999.999.")
 
     # input morphing
+    ticker = ticker.upper()
     expiration = expiration[2:].replace("-", "")
     strike = str(int(strike * 1000)).zfill(8)
     if call:
