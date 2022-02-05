@@ -1,5 +1,5 @@
 """
-This module acts as an EXAMPLE and would contain classes and functions
+This module acts as an EXAMPLE and would contain classes and methods
 related to futures to be used for strawberry schema.
 """
 
