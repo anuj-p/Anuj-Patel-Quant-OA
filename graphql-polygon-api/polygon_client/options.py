@@ -2,8 +2,8 @@
 This module contains functions for Polygon's Options API (see https://polygon.io/docs/options).
 """
 
-from polygon_client import KEY
 from json import JSONDecodeError, loads
+from polygon_client import KEY
 from requests import get, RequestException
 
 

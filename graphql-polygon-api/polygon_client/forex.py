@@ -2,8 +2,8 @@
 This module contains functions for Polygon's Forex API (see https://polygon.io/docs/forex).
 """
 
-from polygon_client import KEY
 from json import JSONDecodeError, loads
+from polygon_client import KEY
 from requests import get, RequestException
 
 
