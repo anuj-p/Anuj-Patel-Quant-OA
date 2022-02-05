@@ -80,59 +80,10 @@ def get_aggregates(ticker: str, multiplier: int, timespan: str, from_: str, to: 
         else:
             raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}).")
     if data["resultsCount"] == 0:
-        raise ValueError(f"Data not found for {ticker} from {from_} to {to}. Perhaps 'ticker' is incorrect or the market was not open in that date range.")
+        raise ValueError(f"Data not found for {ticker} from {from_} to {to} within {limit} {timespan} query limit. Perhaps 'ticker' is incorrect, the market was not open in that date range, or 'limit' is too small.")
 
     return data
 
-
-def get_grouped_daily(date: str, adjusted: bool = True) -> dict:
-    """
-    :param date: date of the requested grouped daily (YYYY-MM-DD)
-    :param adjusted: whether or not the results are adjusted for splits
-    :return: open prices, high prices, low prices, close prices, and more for the entire stock market (see Polygon's API docs)
-    """
-
-    # initial input validation
-    if date == "":
-        raise ValueError("'date' should be non-empty.")
-    if "/" in date:
-        raise ValueError("'date' should not include '/'.")
-    if "-" not in date:
-        raise ValueError("'date' should be of format 'YYYY-MM-DD'.")
-
-    # request
-    endpoint = f"https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{date}?adjusted={adjusted}&apiKey={KEY}"
-    try:
-        response = get(endpoint)
-    except RequestException:
-        raise RequestException(f"Error connecting to endpoint ({endpoint}).")
-    try:
-        data = loads(response.text)
-    except JSONDecodeError:
-        raise RequestException(f"Unexpected non-JSON response from endpoint ({endpoint}).")
-
-    # output validation
-    if data["status"] == "ERROR":
-        if data["error"] == f"The path parameter `date` with value {date} is invalid, must be of the format YYYY-MM-DD.":
-            raise ValueError("'date' should be of format 'YYYY-MM-DD'.")
-        elif data["error"] == "You've exceeded the maximum requests per minute, please wait or upgrade your subscription to continue.":
-            raise RequestException("Maximum requests per minute has been exceeded. Perhaps use a premium API key.")
-    elif data["status"] == "DELAYED":
-        raise ValueError("'date' is not supported yet. Perhaps 'date' is in the future.")
-    elif data["status"] == "NOT_AUTHORIZED":
-        if data["message"] == "Attempted to request data past historical entitlements. Please upgrade your plan at https://polygon.io/pricing":
-            raise RequestException("Unable to request data past historical entitlements. Perhaps use a premium API key.")
-    if data["status"] != "OK":
-        if "message" in data:
-            raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}). Received message: {data['message']}.")
-        elif "error" in data:
-            raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}). Received error: {data['error']}.")
-        else:
-            raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}).")
-    if data["resultsCount"] == 0:
-        raise ValueError(f"Data not found on {date}. Perhaps the market was not open on 'date'.")
-
-    return data
 
 
 def get_daily_open_close(ticker: str, date: str, adjusted: bool = True) -> dict:
@@ -186,6 +137,56 @@ def get_daily_open_close(ticker: str, date: str, adjusted: bool = True) -> dict:
             raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}). Received error: {data['error']}.")
         else:
             raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}).")
+
+    return data
+
+
+def get_grouped_daily(date: str, adjusted: bool = True) -> dict:
+    """
+    :param date: date of the requested grouped daily (YYYY-MM-DD)
+    :param adjusted: whether or not the results are adjusted for splits
+    :return: open prices, high prices, low prices, close prices, and more for the entire stock market (see Polygon's API docs)
+    """
+
+    # initial input validation
+    if date == "":
+        raise ValueError("'date' should be non-empty.")
+    if "/" in date:
+        raise ValueError("'date' should not include '/'.")
+    if "-" not in date:
+        raise ValueError("'date' should be of format 'YYYY-MM-DD'.")
+
+    # request
+    endpoint = f"https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{date}?adjusted={adjusted}&apiKey={KEY}"
+    try:
+        response = get(endpoint)
+    except RequestException:
+        raise RequestException(f"Error connecting to endpoint ({endpoint}).")
+    try:
+        data = loads(response.text)
+    except JSONDecodeError:
+        raise RequestException(f"Unexpected non-JSON response from endpoint ({endpoint}).")
+
+    # output validation
+    if data["status"] == "ERROR":
+        if data["error"] == f"The path parameter `date` with value {date} is invalid, must be of the format YYYY-MM-DD.":
+            raise ValueError("'date' should be of format 'YYYY-MM-DD'.")
+        elif data["error"] == "You've exceeded the maximum requests per minute, please wait or upgrade your subscription to continue.":
+            raise RequestException("Maximum requests per minute has been exceeded. Perhaps use a premium API key.")
+    elif data["status"] == "DELAYED":
+        raise ValueError("'date' is not supported yet. Perhaps 'date' is in the future.")
+    elif data["status"] == "NOT_AUTHORIZED":
+        if data["message"] == "Attempted to request data past historical entitlements. Please upgrade your plan at https://polygon.io/pricing":
+            raise RequestException("Unable to request data past historical entitlements. Perhaps use a premium API key.")
+    if data["status"] != "OK":
+        if "message" in data:
+            raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}). Received message: {data['message']}.")
+        elif "error" in data:
+            raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}). Received error: {data['error']}.")
+        else:
+            raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}).")
+    if data["resultsCount"] == 0:
+        raise ValueError(f"Data not found on {date}. Perhaps the market was not open on 'date'.")
 
     return data
 

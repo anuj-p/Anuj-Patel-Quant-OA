@@ -86,7 +86,71 @@ def get_aggregates(currency_to: str, currency_from: str, multiplier: int, timesp
         else:
             raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}).")
     if data["resultsCount"] == 0:
-        raise ValueError(f"Data not found for {ticker} from {from_} to {to}. Perhaps currency pair is incorrect/unavailable or the market was not open in that date range.")
+        raise ValueError(f"Data not found for {ticker} from {from_} to {to} within {limit} {timespan} query limit. Perhaps currency pair is incorrect/unavailable, the market was not open in that date range, or 'limit' is too small.")
+
+    return data
+
+
+def get_daily_open_close(currency_to: str, currency_from: str, date: str, adjusted: bool = True) -> dict:
+    """
+    :param currency_to: currency symbol to exchange to (case-sensitive)
+    :param currency_from: currency symbol to exchange from (case-sensitive)
+    :param date: date of the requested open/close (YYYY-MM-DD)
+    :param adjusted: whether or not the results are adjusted for splits
+    :return: open prices, close prices, afterhours prices, and more (see Polygon's API docs)
+    """
+
+    # initial input validation
+    if currency_from == "":
+        raise ValueError("'currency_from' should be non-empty.")
+    if "/" in currency_from:
+        raise ValueError("'currency_from' should not include '/'.")
+    if currency_to == "":
+        raise ValueError("'currency_to' should be non-empty.")
+    if "/" in currency_to:
+        raise ValueError("'currency_to' should not include '/'.")
+    if date == "":
+        raise ValueError("'date' should be non-empty.")
+    if "/" in date:
+        raise ValueError("'date' should not include '/'.")
+    if "-" not in date:
+        raise ValueError("'date' should be of format 'YYYY-MM-DD'.")
+
+    # input morphing
+    ticker = f"X:{currency_to}{currency_from}"
+
+    # request
+    endpoint = f"https://api.polygon.io/v1/open-close/crypto/{currency_to}/{currency_from}/{date}?adjusted={adjusted}&apiKey={KEY}"
+    try:
+        response = get(endpoint)
+    except RequestException:
+        raise RequestException(f"Error connecting to endpoint ({endpoint}).")
+    try:
+        data = loads(response.text)
+    except JSONDecodeError:
+        raise RequestException(f"Unexpected non-JSON response from endpoint ({endpoint}).")
+
+    # output validation
+    if "status" in data:
+        if data["status"] == "ERROR":
+            if data["error"] == "today's Date not supported yet":
+                raise ValueError("'date' is not supported yet. Perhaps 'date' is in the future.")
+            elif data["error"] == "could not parse from Date. use YYYY-MM-DD timestamps":
+                raise ValueError("'date' should be of format 'YYYY-MM-DD'.")
+            elif data["error"] == "Ticker was incorrectly formatted":
+                raise ValueError("'ticker' was incorrectly formatted.")
+            elif data["error"] == "You've exceeded the maximum requests per minute, please wait or upgrade your subscription to continue.":
+                raise RequestException("Maximum requests per minute has been exceeded. Perhaps use a premium API key.")
+        elif data["status"] == "NOT_FOUND":
+            if data["message"] == "Data not found.":
+                raise ValueError(f"Data not found for {ticker} on {date}. Perhaps currency pair is incorrect/unavailable or the market was not open on 'date'.")
+        if data["status"] != "OK":
+            if "message" in data:
+                raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}). Received message: {data['message']}.")
+            elif "error" in data:
+                raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}). Received error: {data['error']}.")
+            else:
+                raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}).")
 
     return data
 
@@ -128,71 +192,6 @@ def get_grouped_daily(date: str, adjusted: bool = True) -> dict:
     elif data["status"] == "NOT_AUTHORIZED":
         if data["message"] == "Attempted to request data past historical entitlements. Please upgrade your plan at https://polygon.io/pricing":
             raise RequestException("Unable to request data past historical entitlements. Perhaps use a premium API key.")
-    if data["status"] != "OK":
-        if "message" in data:
-            raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}). Received message: {data['message']}.")
-        elif "error" in data:
-            raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}). Received error: {data['error']}.")
-        else:
-            raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}).")
-    if data["resultsCount"] == 0:
-        raise ValueError(f"Data not found on {date}. Perhaps the market was not open on 'date'.")
-
-    return data
-
-
-def get_daily_open_close(currency_to: str, currency_from: str, date: str, adjusted: bool = True) -> dict:
-    """
-    :param currency_to: currency symbol to exchange to (case-sensitive)
-    :param currency_from: currency symbol to exchange from (case-sensitive)
-    :param date: date of the requested open/close (YYYY-MM-DD)
-    :param adjusted: whether or not the results are adjusted for splits
-    :return: open prices, close prices, afterhours prices, and more (see Polygon's API docs)
-    """
-
-    # initial input validation
-    if currency_from == "":
-        raise ValueError("'currency_from' should be non-empty.")
-    if "/" in currency_from:
-        raise ValueError("'currency_from' should not include '/'.")
-    if currency_to == "":
-        raise ValueError("'currency_to' should be non-empty.")
-    if "/" in currency_to:
-        raise ValueError("'currency_to' should not include '/'.")
-    if date == "":
-        raise ValueError("'date' should be non-empty.")
-    if "/" in date:
-        raise ValueError("'date' should not include '/'.")
-    if "-" not in date:
-        raise ValueError("'date' should be of format 'YYYY-MM-DD'.")
-
-    # input morphing
-    ticker = f"X:{currency_to}{currency_from}"
-
-    # request
-    endpoint = f"https://api.polygon.io/v1/open-close/crypto/{currency_from}/{currency_to}/{date}?adjusted={adjusted}&apiKey={KEY}"
-    try:
-        response = get(endpoint)
-    except RequestException:
-        raise RequestException(f"Error connecting to endpoint ({endpoint}).")
-    try:
-        data = loads(response.text)
-    except JSONDecodeError:
-        raise RequestException(f"Unexpected non-JSON response from endpoint ({endpoint}).")
-
-    # output validation
-    if data["status"] == "ERROR":
-        if data["error"] == "today's Date not supported yet":
-            raise ValueError("'date' is not supported yet. Perhaps 'date' is in the future.")
-        elif data["error"] == "could not parse from Date. use YYYY-MM-DD timestamps":
-            raise ValueError("'date' should be of format 'YYYY-MM-DD'.")
-        elif data["error"] == "Ticker was incorrectly formatted":
-            raise ValueError("'ticker' was incorrectly formatted.")
-        elif data["error"] == "You've exceeded the maximum requests per minute, please wait or upgrade your subscription to continue.":
-            raise RequestException("Maximum requests per minute has been exceeded. Perhaps use a premium API key.")
-    elif data["status"] == "NOT_FOUND":
-        if data["message"] == "Data not found.":
-            raise ValueError(f"Data not found for {ticker} on {date}. Perhaps currency pair is incorrect/unavailable or the market was not open on 'date'.")
     if data["status"] != "OK":
         if "message" in data:
             raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}). Received message: {data['message']}.")

@@ -101,7 +101,7 @@ def get_aggregates(ticker: str, expiration: str, call: bool, strike: float, mult
         else:
             raise Exception(f"Something went wrong. Unknown {data['status']} status received from endpoint ({endpoint}).")
     if data["resultsCount"] == 0:
-        raise ValueError(f"Data not found for {ticker} from {from_} to {to}. Perhaps specified option is incorrect or the market was not open in that date range.")
+        raise ValueError(f"Data not found for {ticker} from {from_} to {to} within {limit} {timespan} query limit. Perhaps specified option is incorrect, the market was not open in that date range, or 'limit' is too small.")
 
     return data
 
