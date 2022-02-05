@@ -2,6 +2,9 @@
 A package designed to wrap data-providing functions in 
 [Strawberry](https://strawberry.rocks/) schema for GraphQL use.
 
+NOTE: Be careful when using PreviousClose. The values provided by Polygon for
+"transactions" and "vwPrice" can be hit or miss.
+
 ## Structure
 This package is divided into modules named after the different sections
 (i.e. stocks, options, forex, and crypto.) This division keeps functions
