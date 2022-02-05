@@ -84,7 +84,6 @@ class Options:
         results = data["results"]
         result = results[0]
         return structs.PreviousClose(
-            ticker=result["T"][2:] if result["T"][:2] == "O:" else result["T"],
             close=result["c"],
             high=result["h"],
             low=result["l"],

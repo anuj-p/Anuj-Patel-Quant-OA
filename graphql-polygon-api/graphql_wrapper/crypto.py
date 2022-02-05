@@ -28,7 +28,7 @@ class Crypto:
         :return: aggregate bars for a stock over a given date range in custom time window sizes
         """
 
-        data = polygon_client.get_aggregates(currency_from, currency_to, multiplier, timespan.value, from_, to, adjusted=adjusted, ascending=sort.value, limit=limit)
+        data = polygon_client.get_aggregates(currency_to, currency_from, multiplier, timespan.value, from_, to, adjusted=adjusted, ascending=sort.value, limit=limit)
         results = data["results"]
         market = []
         for result in results:
@@ -55,7 +55,6 @@ class Crypto:
         """
 
         data = polygon_client.get_daily_open_close(currency_to, currency_from, date, adjusted=adjusted)
-        print(data)
         closing_trades = []
         for trade in data["closingTrades"]:
             closing_trades.append(structs.CryptoDailyOpenCloseTrade(
@@ -119,7 +118,6 @@ class Crypto:
         results = data["results"]
         result = results[0]
         return structs.PreviousClose(
-            ticker=result["T"],
             close=result["c"],
             high=result["h"],
             low=result["l"],

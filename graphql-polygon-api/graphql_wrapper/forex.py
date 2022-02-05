@@ -82,7 +82,6 @@ class Forex:
         results = data["results"]
         result = results[0]
         return structs.PreviousClose(
-            ticker=result["T"],
             close=result["c"],
             high=result["h"],
             low=result["l"],
